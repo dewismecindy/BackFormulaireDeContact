@@ -50,7 +50,7 @@ app.post("/form", async (req, res) => {
   /* j'opte pour un try/catch */
   try {
     const reponse = await client.messages.create(
-      process.env.SANDBOX,
+      process.env.SENDBOX,
       messageData
     );
     console.log("response>>>", response);
