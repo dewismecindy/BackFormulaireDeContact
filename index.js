@@ -18,13 +18,6 @@ const client = mailgun.client({
   key: process.env.MAILGUN_API_KEY,
 });
 
-const messageData = {
-  from: "Excited User <me@samples.mailgun.org>",
-  to: "foo@example.com, bar@example.com",
-  subject: "Bravo",
-  text: "J'ai enfin réussis l'exercice :)",
-};
-
 /* J'interroge ma route */
 app.get("/", (req, res) => {
   console.log("route /");
@@ -32,7 +25,7 @@ app.get("/", (req, res) => {
   res.status(200).json({ message: "Coucou !" });
 });
 
-app.post("/form", (req, res) => {
+app.post("/form", async (req, res) => {
   console.log("route form");
   console.log(req.body);
 
@@ -45,14 +38,26 @@ app.post("/form", (req, res) => {
   /* Pour être sûre que j'ai bien fait la requête */
   console.log("messageData", messageData);
 
-  client.messages
+  /*   client.messages
     .create(process.env.SANDBOX, messageData)
     .then((res) => {
       console.log(res);
     })
     .catch((err) => {
       console.error(err);
-    });
+    }); */
+
+  /* j'opte pour un try/catch */
+  try {
+    const reponse = await client.messages.create(
+      process.env.SANDBOX,
+      messageData
+    );
+    console.log("response>>>", response);
+    res.status(200).json({ message: "email send" });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
 });
 
 app.listen(process.env.PORT, () => {
